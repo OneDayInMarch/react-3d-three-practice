@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 //机器人脑袋
 function createHead() {
   //SphereGeometry创建球形几何体
@@ -123,6 +125,19 @@ function generateStarts(num: number) {
   }
   return starts;
 }
+//创建文本
+function createText(content: string, font: any) {
+  const textGeometry = new TextGeometry(content, {
+    font: font,
+    size: 1,
+    height: 0.1,
+    curveSegments: 1,
+  });
+  textGeometry.center();
+  const textMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }); // front
+  const mesh = new THREE.Mesh(textGeometry, textMaterial);
+  return mesh;
+}
 /**
  * 创建一个Three.js场景，包括相机和渲染器
  */
@@ -138,6 +153,26 @@ function Robot() {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
+  //添加坐标系
+  const axisHelper = new THREE.AxesHelper(150);
+  scene.add(axisHelper);
+  //坐标系添加文字
+  const loader = new FontLoader();
+  let meshX = new THREE.Mesh();
+  let meshY = new THREE.Mesh();
+  let meshZ = new THREE.Mesh();
+  loader.load("fonts/optimer_regular.typeface.json", function (font) {
+    meshX = createText("X", font);
+    meshY = createText("Y", font);
+    meshZ = createText("Z", font);
+    meshX.position.x = 12;
+    meshY.position.y = 12;
+    meshZ.position.z = 12;
+    scene.add(meshX);
+    scene.add(meshY);
+    scene.add(meshZ);
+  });
+
   const robot = generateRobot();
   const robot2 = generateRobot();
   robot2.position.x = 6;
@@ -148,7 +183,7 @@ function Robot() {
   // 创建一个Three.js方向光，包括颜色、强度
   const straightLight = new THREE.DirectionalLight(0xffffff, 5);
   // 设置方向光的位置
-  straightLight.position.set(5, 5, 10);
+  straightLight.position.set(20, 20, 20);
   // 将方向光添加到场景中
   scene.add(straightLight);
 
@@ -158,17 +193,22 @@ function Robot() {
   //轨道控制器
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.update();
-  const update = () => {
-    requestAnimationFrame(update);
-    robot.rotation.y -= 0.005; //机器人旋转
+
+  const animate = () => {
+    requestAnimationFrame(animate);
+    robot.rotation.z -= 0.005; //机器人旋转
     robot2.rotation.y -= 0.005;
     // 粒子旋转
     starts.rotation.y -= 0.001;
     starts.rotation.z += 0.001;
     starts.rotation.x += 0.001;
+    //
+    meshX.lookAt(camera.position);
+    meshY.lookAt(camera.position);
+    meshZ.lookAt(camera.position);
     renderer.render(scene, camera);
   };
-  update(); //自动更新
+  animate(); //添加动画
 
   // 监听组件挂载和卸载
   useEffect(() => {
