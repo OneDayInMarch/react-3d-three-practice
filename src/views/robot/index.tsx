@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { generateRobot, generateStarts } from "./generate";
 import { ThreeTool } from "../../BasicThree";
+import Stats from "three/examples/jsm/libs/stats.module.js";
 
 /**
  * 创建一个Three.js场景，包括相机和渲染器
@@ -9,6 +10,7 @@ import { ThreeTool } from "../../BasicThree";
 function Robot() {
   // 创建一个div容器，用于存放渲染的Three.js场景
   const containerRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<Stats>(); // 创建用于引用统计信息的 ref
 
   // 创建 ThreeTool 实例
   const instance = new ThreeTool();
@@ -34,7 +36,6 @@ function Robot() {
   const straightLight = new THREE.DirectionalLight(0xffffff, 5);
   straightLight.position.set(20, 20, 20);
   instance.scene.add(straightLight);
-
   // 动画函数
   const animate = () => {
     requestAnimationFrame(animate);
@@ -44,6 +45,7 @@ function Robot() {
     starts.rotation.z += 0.001;
     starts.rotation.x += 0.001;
     instance.renderer.render(instance.scene, instance.camera);
+    statsRef.current && statsRef.current.update(); // 更新统计信息
   };
 
   // 监听组件挂载和卸载
@@ -51,6 +53,7 @@ function Robot() {
     if (containerRef.current) {
       containerRef.current.appendChild(instance.renderer.domElement);
       instance.renderer.render(instance.scene, instance.camera);
+      statsRef.current = instance.initStats(containerRef.current); // 初始化统计信息
       // 启动动画循环
       animate();
     }

@@ -1,6 +1,5 @@
 import * as THREE from "three";
-import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
-export function createHead() {
+function createHead() {
   //SphereGeometry创建球形几何体
   const head = new THREE.SphereGeometry(4, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.5);
   const headMaterial = new THREE.MeshStandardMaterial({
@@ -12,7 +11,7 @@ export function createHead() {
   return headMesh;
 }
 //触角
-export function generateHorn(y: number, z: number, angle: number) {
+function generateHorn(y: number, z: number, angle: number) {
   //触角 CapsuleGeometry 创建胶囊形状的几何体。胶囊形状可以看作是一个圆柱体两端加上半球体
   const line = new THREE.CapsuleGeometry(0.1, 2);
   const lineMaterial = new THREE.MeshStandardMaterial({
@@ -27,7 +26,7 @@ export function generateHorn(y: number, z: number, angle: number) {
   return lineMesh;
 }
 //机器人眼睛
-export function generateEye(x: number, y: number, z: number) {
+function generateEye(x: number, y: number, z: number) {
   //SphereGeometry创建球形几何体
   const eye = new THREE.SphereGeometry(0.5, 32, 16, 0, Math.PI * 2, 0, Math.PI * 2);
   const eyeMaterial = new THREE.MeshStandardMaterial({
@@ -54,7 +53,7 @@ export function generateBody() {
   return bodyMesh;
 }
 //胳膊、腿
-export function generateLegs(y: number, z: number) {
+function generateLegs(y: number, z: number) {
   const leg1 = new THREE.CapsuleGeometry(1, 4);
   const legMaterial1 = new THREE.MeshStandardMaterial({
     color: 0x43b988,
@@ -120,17 +119,4 @@ export function generateStarts(num: number) {
     starts.add(target);
   }
   return starts;
-}
-//创建文本
-export function createText(content: string, font: any) {
-  const textGeometry = new TextGeometry(content, {
-    font: font,
-    size: 1,
-    height: 0.1,
-    curveSegments: 1,
-  });
-  textGeometry.center();
-  const textMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }); // front
-  const mesh = new THREE.Mesh(textGeometry, textMaterial);
-  return mesh;
 }
