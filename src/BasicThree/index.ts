@@ -40,6 +40,7 @@ export class ThreeTool {
 
     return camera;
   }
+  //初始化轨道控制器
   public initOrbitControls() {
     const controls = new OrbitControls(this.camera, this.renderer.domElement);
 
@@ -47,13 +48,15 @@ export class ThreeTool {
   }
 
   // 初始化性能监控的方法
-  public initStats(container: HTMLElement) {
+  public initStats(container: HTMLDivElement) {
     const stats = new Stats();
     stats.dom.style.position = "absolute";
     stats.dom.style.left = "0";
     stats.dom.style.zIndex = "100";
     container.appendChild(stats.dom); // 将性能监控DOM元素添加到容器中
+    return stats;
   }
+  //初始化坐标系辅助
   public initAxisHelper(axesLength: number = 150, showText: boolean = true) {
     const helper = new THREE.AxesHelper(axesLength);
     if (showText) {
